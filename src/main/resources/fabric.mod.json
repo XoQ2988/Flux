@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "flux",
+  "name": "Flux",
+  "version": "${version}",
+  "entrypoints": {
+    "client": [
+      "me.xoq.flux.FluxClient"
+    ]
+  },
+  "mixins": [
+    "flux.client.mixins.json"
+  ],
+  "depends": {
+    "java": ">=21",
+    "minecraft": "${minecraft_version}",
+    "fabricloader": ">=${loader_version}"
+  }
+}

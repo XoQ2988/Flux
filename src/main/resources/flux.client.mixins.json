@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "me.xoq.flux.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ChatInputSuggesterMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "KeyboardMixin",
+    "MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}
