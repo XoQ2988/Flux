@@ -12,20 +12,33 @@ public class EventBus {
     // Holds a target instance and its listener method
     private record ListenerMethod(Object target, Method method) {}
 
+    // Dispatches the event to all registered listener methods
+    public <E> E dispatch(E event) {
+        List<ListenerMethod> regs = listeners.get(event.getClass());
+        if (regs == null) return event;
+
+        // Iterate a snapshot so unregister() can safely remove from the live list
+        for (ListenerMethod lm : List.copyOf(regs)) {
+            try {
+                lm.method().invoke(lm.target(), event);
+            } catch (Exception ex) {
+                FluxClient.LOG.error("Error in event handler {}::{}",
+                        lm.target().getClass().getSimpleName(),
+                        lm.method().getName(), ex);
+            }
+        }
+        return event;
+    }
+
     // Register all @EventHandler methods on the given listener object
     public void register(Object listener) {
-        for (Method m : listener.getClass().getDeclaredMethods()) {
-            if (!m.isAnnotationPresent(EventHandler.class)) continue;
-            if (m.getParameterCount() != 1) {
-                FluxClient.LOG.warn("Invalid @EventHandler method (must take one arg): {}::{}",
-                        listener.getClass().getSimpleName(), m.getName());
-                continue;
-            }
-            Class<?> eventType = m.getParameterTypes()[0];
-            m.setAccessible(true);
+        for (Method method : listener.getClass().getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(EventHandler.class)) continue;
+            Class<?> eventType = method.getParameterTypes()[0];
+            method.setAccessible(true);
             listeners
                     .computeIfAbsent(eventType, k -> new ArrayList<>())
-                    .add(new ListenerMethod(listener, m));
+                    .add(new ListenerMethod(listener, method));
         }
     }
 
@@ -34,29 +47,10 @@ public class EventBus {
         for (Iterator<Map.Entry<Class<?>, List<ListenerMethod>>> it = listeners.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Class<?>, List<ListenerMethod>> entry = it.next();
             List<ListenerMethod> methods = entry.getValue();
-            methods.removeIf(lm -> lm.target == listener);
+            methods.removeIf(lm -> lm.target() == listener);
             if (methods.isEmpty()) {
                 it.remove();
             }
         }
-    }
-
-    // Dispatches the event to all registered listener methods
-    public <T> T dispatch(T event) {
-        Class<?> cls = event.getClass();
-        for (var entry : listeners.entrySet()) {
-            if (!entry.getKey().isAssignableFrom(cls)) continue;
-            for (ListenerMethod lm : entry.getValue()) {
-                try {
-                    lm.method.invoke(lm.target, event);
-                } catch (Exception e) {
-                    FluxClient.LOG.error("Error in handler {}::{} for {}",
-                            lm.target.getClass().getSimpleName(),
-                            lm.method.getName(),
-                            cls.getSimpleName(), e);
-                }
-            }
-        }
-        return event;
     }
 }

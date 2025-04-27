@@ -27,7 +27,7 @@ public class FpsDisplay extends Module {
             new IntSetting.Builder()
                     .name("posX")
                     .description("Horizontal position of the HUD text.")
-                    .defaultValue(10)
+                    .defaultValue(2)
                     .range(0, 9999)
                     .build()
     );
@@ -36,7 +36,7 @@ public class FpsDisplay extends Module {
             new IntSetting.Builder()
                     .name("posY")
                     .description("Vertical position of the HUD text.")
-                    .defaultValue(10)
+                    .defaultValue(2)
                     .range(0, 9999)
                     .build()
     );

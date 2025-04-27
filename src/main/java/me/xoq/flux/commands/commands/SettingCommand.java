@@ -7,10 +7,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import me.xoq.flux.commands.Command;
 import me.xoq.flux.modules.Module;
 import me.xoq.flux.modules.Modules;
-import me.xoq.flux.settings.EnumSetting;
-import me.xoq.flux.settings.Setting;
-import me.xoq.flux.settings.SettingsManager;
-import me.xoq.flux.settings.StringSetting;
+import me.xoq.flux.settings.*;
 import net.minecraft.command.CommandSource;
 
 import java.util.Optional;
@@ -34,8 +31,6 @@ public class SettingCommand extends Command {
         return sb.buildFuture();
     };
 
-
-
     private static final SuggestionProvider<CommandSource> VALUE_SUGGESTER = (context, sb) -> {
         String module = context.getArgument("module", String.class);
         String key    = context.getArgument("setting", String.class);
@@ -46,6 +41,10 @@ public class SettingCommand extends Command {
         if (def instanceof Boolean) {
             sb.suggest("true");
             sb.suggest("false");
+        } else if (s instanceof ColorSetting) {
+            int col = (Integer) def;
+            sb.suggest(String.format("0x%08X", col));
+            sb.suggest(String.format("#%08X", col));
         } else if (def instanceof Integer) {
             sb.suggest(def.toString());
         } else if (s instanceof EnumSetting<?> es) {
@@ -58,15 +57,21 @@ public class SettingCommand extends Command {
         return sb.buildFuture();
     };
 
+
     public SettingCommand() {
         super("setting", "View or change a module setting");
     }
+
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> root) {
         root
                 .then(argument("module", StringArgumentType.word())
                         .suggests(MODULE_SUGGESTER)
+                        // reset all settings for module
+                        .then(literal("reset")
+                                .executes(this::resetModuleSettings)
+                        )
                         .executes(this::listModuleSettings)
                         .then(argument("setting", StringArgumentType.word())
                                 .suggests(KEY_SUGGESTER)
@@ -93,6 +98,17 @@ public class SettingCommand extends Command {
         return Optional.empty();
     }
 
+    private int resetModuleSettings(CommandContext<CommandSource> ctx) {
+        String module = StringArgumentType.getString(ctx, "module");
+        SettingsManager mgr = SettingsManager.getInstance();
+        mgr.getRegisteredKeys().stream()
+                .filter(k -> k.startsWith(module + "."))
+                .map(mgr::get)
+                .forEach(Setting::reset);
+        info("Reset all settings for module §6" + Modules.getByName(module).getTitle() + "§r§7 to defaults.");
+        return SINGLE_SUCCESS;
+    }
+
     private int listModuleSettings(CommandContext<CommandSource> context) {
         String module = context.getArgument("module", String.class);
         SettingsManager mgr = SettingsManager.getInstance();
@@ -102,7 +118,7 @@ public class SettingCommand extends Command {
                 .forEach(s -> {
 
                     String line = "§6" + s.getTitle() +
-                            "§r: " + s.getDescription() +
+                            "§r§7: " + s.getDescription() +
                             " §7[Current: §e" + s.getValue() +
                             "§7]§r";
 
@@ -121,7 +137,7 @@ public class SettingCommand extends Command {
             return SINGLE_SUCCESS;
         }
         Setting<?> s = opt.get();
-        info("§6" + s.getTitle() + "§r is set to §e" + s.getValue() + "§r.");
+        info("§6" + s.getTitle() + "§r§7 is set to §e" + s.getValue() + "§r.");
         return SINGLE_SUCCESS;
     }
 
@@ -131,7 +147,7 @@ public class SettingCommand extends Command {
         String key    = StringArgumentType.getString(context, "setting");
         String input  = StringArgumentType.getString(context, "value").trim();
 
-        Optional<Setting<?>> opt = findSetting(module, key );
+        Optional<Setting<?>> opt = findSetting(module, key);
         if (opt.isEmpty()) {
             info("§cUnknown setting: §6" + key + "§r");
             return SINGLE_SUCCESS;
@@ -156,12 +172,11 @@ public class SettingCommand extends Command {
             info("Invalid value for §6" + key + "§c: §e" + input + "§r");
             return SINGLE_SUCCESS;
         }
-
         @SuppressWarnings("unchecked")
         Setting<Object> s = (Setting<Object>) raw;
         s.setValue(parsed);
 
-        info("Set §6" + s.getTitle() + "§r to §e" + s.getValue() + "§r.");
+        info("Set §6" + s.getTitle() + "§r§7 to §e" + s.getValue() + "§r.");
         return SINGLE_SUCCESS;
     }
 

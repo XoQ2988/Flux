@@ -24,8 +24,6 @@ public abstract class Module {
         this.settings = new SettingHelper(SettingsManager.getInstance(), name);
     }
 
-    protected void onTick() { }
-
     public void toggle() {
         ChatUtils.info("Toggled §3" + title + "§r " +(!enabled ? "§2on" : "§4off"));
         setEnabled(!enabled);

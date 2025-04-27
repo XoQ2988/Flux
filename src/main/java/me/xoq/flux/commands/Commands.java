@@ -16,7 +16,7 @@ public class Commands {
 
     public static void init() {
         add(new HelpCommand());
-        // add(new TestCommand());
+        add(new TestCommand());
         add(new BindCommand());
         add(new BindsCommand());
         add(new ListCommand());

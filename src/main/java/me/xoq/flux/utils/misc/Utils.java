@@ -15,6 +15,19 @@ public class Utils {
     public static String titleToName(String title) {
         return title.replace(" ", "-").toLowerCase(Locale.ROOT);
     }
+
+    public static int parseColor(String input) {
+        String hex = input.startsWith("0x")
+                ? input.substring(2)
+                : input.startsWith("#")
+                ? input.substring(1)
+                : input;
+        if (hex.length() > 8) {
+            hex = hex.substring(hex.length() - 8); // drop extra alpha if provided
+        }
+        return (int) Long.parseLong(hex, 16);
+    }
+
     public static String getKeyName(int key) {
         // Printable keys: use GLFW’s mapping, then title-case
         String raw = GLFW.glfwGetKeyName(key, 0);
