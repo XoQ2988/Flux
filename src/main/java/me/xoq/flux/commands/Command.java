@@ -42,6 +42,8 @@ public abstract class Command {
     public abstract void build(LiteralArgumentBuilder<CommandSource> builder);
 
     public void info(String message) { ChatUtils.info(title, message); }
+    public void warn(String message) { ChatUtils.info(title, "§e" + message); }
+    public void error(String message) { ChatUtils.info(title, "§l§c" + message); }
 
     public String getName() { return name; }
     public String getTitle() { return title; }

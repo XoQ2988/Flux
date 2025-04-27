@@ -1,6 +1,8 @@
 package me.xoq.flux.modules;
 
 import me.xoq.flux.FluxClient;
+import me.xoq.flux.settings.SettingsManager;
+import me.xoq.flux.utils.config.SettingHelper;
 import me.xoq.flux.utils.input.Keybind;
 import me.xoq.flux.utils.misc.ChatUtils;
 import me.xoq.flux.utils.misc.Utils;
@@ -9,6 +11,7 @@ public abstract class Module {
     private final String name;
     private final String title;
     private final String description;
+    protected final SettingHelper settings;
 
     private boolean enabled;
 
@@ -18,6 +21,7 @@ public abstract class Module {
         this.name = name;
         this.title = Utils.nameToTitle(name);
         this.description = description;
+        this.settings = new SettingHelper(SettingsManager.getInstance(), name);
     }
 
     protected void onTick() { }
@@ -43,6 +47,8 @@ public abstract class Module {
     protected void onDisabled() { }
 
     public void info(String message) { ChatUtils.info(title, message); }
+    public void warn(String message) { ChatUtils.info(title, "§e" + message); }
+    public void error(String message) { ChatUtils.info(title, "§l§c" + message); }
 
     // getters
     public String getName()        { return name; }

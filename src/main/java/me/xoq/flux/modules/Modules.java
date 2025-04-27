@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import me.xoq.flux.FluxClient;
 import me.xoq.flux.events.EventHandler;
 import me.xoq.flux.events.KeyEvent;
-import me.xoq.flux.modules.impl.TestModule;
+import me.xoq.flux.modules.impl.FpsDisplay;
 import me.xoq.flux.utils.input.Input;
 import me.xoq.flux.utils.input.KeyAction;
 import me.xoq.flux.utils.input.Keybind;
@@ -31,7 +31,10 @@ public class Modules {
     }
 
     public static void init() {
-        register(new TestModule());
+        // register(new TestModule());
+
+        register(new FpsDisplay());
+
 
         FluxClient.EVENT_BUS.register(INSTANCE);
     }

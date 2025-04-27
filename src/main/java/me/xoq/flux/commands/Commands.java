@@ -20,6 +20,7 @@ public class Commands {
         add(new BindCommand());
         add(new BindsCommand());
         add(new ListCommand());
+        add(new SettingCommand());
         add(new ToggleCommand());
     }
 

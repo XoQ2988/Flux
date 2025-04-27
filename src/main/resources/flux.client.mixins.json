@@ -5,6 +5,7 @@
   "client": [
     "ChatInputSuggesterMixin",
     "ClientPlayNetworkHandlerMixin",
+    "InGameHudMixin",
     "KeyboardMixin",
     "MinecraftClientMixin"
   ],
