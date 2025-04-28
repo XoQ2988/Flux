@@ -12,6 +12,7 @@ public interface Setting <T>{
 
     // setter
     void setValue(T value);
+    void setKey(String s);
 
     default void reset() {
         setValue(getDefault());

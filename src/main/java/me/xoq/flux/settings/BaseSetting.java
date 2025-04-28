@@ -3,7 +3,10 @@ package me.xoq.flux.settings;
 import me.xoq.flux.utils.misc.Utils;
 
 public abstract class BaseSetting<T> implements Setting<T> {
-    private final String name, title, key, description;
+    private final String name;
+    private final String title;
+    private String key;
+    private final String description;
     private final T defaultValue;
     private T value;
 
@@ -22,6 +25,7 @@ public abstract class BaseSetting<T> implements Setting<T> {
     @Override public String getDescription() { return description; }
     @Override public T getDefault()          { return defaultValue; }
     @Override public T getValue()            { return value; }
+    @Override public void setKey(String value) { this.key = value; }
     @Override public void setValue(T value)  { this.value = value; }
 
     public void reset() { setValue(defaultValue); }
