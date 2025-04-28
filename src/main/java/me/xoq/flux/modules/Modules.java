@@ -34,13 +34,10 @@ public class Modules {
     }
 
     public static void init() {
-        // register(new TestModule());
-
         register(new AntiBreak());
         register(new AutoFish());
         register(new AutoTool());
         register(new FpsDisplay());
-
 
         FluxClient.EVENT_BUS.register(INSTANCE);
     }

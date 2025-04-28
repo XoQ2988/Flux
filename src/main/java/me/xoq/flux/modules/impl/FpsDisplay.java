@@ -15,6 +15,11 @@ import net.minecraft.util.math.MathHelper;
 import static me.xoq.flux.FluxClient.mc;
 
 public class FpsDisplay extends Module {
+    public FpsDisplay() {
+        super("fps-display", "Display the game's FPS");
+        setEnabled(true);
+    }
+
     private final Setting<String> hudText = settings.add(
             new StringSetting.Builder()
                     .name("text")
@@ -45,31 +50,25 @@ public class FpsDisplay extends Module {
             new ColorSetting.Builder()
                     .name("color")
                     .description("ARGB color of the HUD text.")
-                    .defaultValue(0xFFFFFFFF) // white
+                    .defaultValue(0xFFFFFFFF)
                     .build()
     );
-
-    public FpsDisplay() {
-        super("fps-display", "Display the game's FPS");
-        setEnabled(true);
-    }
 
     @EventHandler
     public void onRender2D(Render2DEvent event) {
         if (mc.options.hudHidden || !isEnabled()) return;
-        DrawContext drawContext = event.getContext();
-        TextRenderer font = mc.textRenderer;
 
+        DrawContext ctx = event.getContext();
+        TextRenderer font = mc.textRenderer;
         String text = hudText.getValue().replace("{FPS}", String.valueOf(mc.getCurrentFps()));
+
         var window = mc.getWindow();
         int maxX = window.getScaledWidth()  - font.getWidth(text);
         int maxY = window.getScaledHeight() - font.fontHeight;
 
-        drawContext.drawTextWithShadow(
-                font, Text.literal(text),
-                MathHelper.clamp(posX.getValue(), 0, maxX),
-                MathHelper.clamp(posY.getValue(), 0, maxY),
-                color.getValue()
-        );
+        int x = MathHelper.clamp(posX.getValue(), 0, maxX);
+        int y = MathHelper.clamp(posY.getValue(), 0, maxY);
+
+        ctx.drawTextWithShadow(font, Text.literal(text), x, y, color.getValue());
     }
 }

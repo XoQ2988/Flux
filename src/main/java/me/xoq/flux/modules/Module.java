@@ -1,7 +1,6 @@
 package me.xoq.flux.modules;
 
 import me.xoq.flux.FluxClient;
-import me.xoq.flux.events.TickEvent;
 import me.xoq.flux.settings.SettingsManager;
 import me.xoq.flux.utils.config.SettingHelper;
 import me.xoq.flux.utils.input.Keybind;

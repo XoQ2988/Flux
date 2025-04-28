@@ -51,8 +51,14 @@ public class AntiBreak extends Module {
 
     private boolean warned, prevented;
 
+    @Override
+    protected void onEnabled() {
+        warned = false;
+        prevented = false;
+    }
+
     @EventHandler
-    private void onAttackingBlock(BlockAttackEvent event) {
+    private void onBlockAttack(BlockAttackEvent event) {
         ItemStack handStack = mc.player.getMainHandStack();
         if (handStack.isEmpty()) return;
 
@@ -64,8 +70,7 @@ public class AntiBreak extends Module {
         // Prevention logic
         if (shouldPrevent.getValue() && remainingPercent <= preventThreshold.getValue()) {
             if (!prevented) {
-                error(handStack.getItem().getName(handStack).getString()
-                        + " at " + remainingPercent + "% durability");
+                error(formatToolName(handStack) + " at " + remainingPercent + "% durability");
                 prevented = true;
             }
 
@@ -76,9 +81,13 @@ public class AntiBreak extends Module {
         // Warning logic
         if (shouldWarn.getValue() && remainingPercent <= warnThreshold.getValue()) {
             if (!warned) {
-                warn(handStack.getItem().getName(handStack).getString() + " at " + remainingPercent + "% durability");
+                warn(formatToolName(handStack) + " at " + remainingPercent + "% durability");
                 warned = true;
             }
         } else warned = false;
+    }
+
+    private String formatToolName(ItemStack stack) {
+        return stack.getItem().getName(stack).getString();
     }
 }
