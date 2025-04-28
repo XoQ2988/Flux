@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import me.xoq.flux.FluxClient;
 import me.xoq.flux.events.EventHandler;
 import me.xoq.flux.events.KeyEvent;
+import me.xoq.flux.modules.impl.AutoTool;
 import me.xoq.flux.modules.impl.FpsDisplay;
 import me.xoq.flux.utils.input.Input;
 import me.xoq.flux.utils.input.KeyAction;
@@ -33,6 +34,7 @@ public class Modules {
     public static void init() {
         // register(new TestModule());
 
+        register(new AutoTool());
         register(new FpsDisplay());
 
 
