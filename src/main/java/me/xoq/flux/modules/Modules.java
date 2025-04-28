@@ -5,6 +5,7 @@ import me.xoq.flux.FluxClient;
 import me.xoq.flux.events.EventHandler;
 import me.xoq.flux.events.KeyEvent;
 import me.xoq.flux.modules.impl.AntiBreak;
+import me.xoq.flux.modules.impl.AutoFish;
 import me.xoq.flux.modules.impl.AutoTool;
 import me.xoq.flux.modules.impl.FpsDisplay;
 import me.xoq.flux.utils.input.Input;
@@ -36,6 +37,7 @@ public class Modules {
         // register(new TestModule());
 
         register(new AntiBreak());
+        register(new AutoFish());
         register(new AutoTool());
         register(new FpsDisplay());
 
@@ -60,7 +62,7 @@ public class Modules {
 
     // Binding
     public void setModuleToBind(Module module) {
-        this.moduleToBind       = module;
+        this.moduleToBind = module;
         moduleToBind.info("Press the new bind for " + module.getName());
     }
 

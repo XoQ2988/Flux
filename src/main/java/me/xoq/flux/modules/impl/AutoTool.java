@@ -54,7 +54,7 @@ public class AutoTool extends Module {
 
 
     @EventHandler
-    private void onTick(TickEvent event) {
+    public void onTick(TickEvent event) {
         if (didSwitch && switchBack.getValue() && ticksUntilSwitchBack >= 0) {
             if (ticksUntilSwitchBack-- <= 0) {
                 PlayerInventory inv = mc.player.getInventory();

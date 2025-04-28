@@ -19,8 +19,6 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
                                             ClientConnection connection, ClientConnectionState connectionState) {
         super(client, connection, connectionState);
     }
-
-
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
     private void onSendChatMessage(String message, CallbackInfo ci) {
         if (!message.startsWith(".")) return;

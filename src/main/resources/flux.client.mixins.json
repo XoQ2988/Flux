@@ -3,13 +3,14 @@
   "package": "me.xoq.flux.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "BlockItemMixin",
     "ChatInputSuggesterMixin",
     "ClientPlayerInteractionManagerMixin",
     "ClientPlayNetworkHandlerMixin",
     "InGameHudMixin",
     "KeyboardMixin",
     "MinecraftClientMixin",
-    "BlockItemMixin"
+    "SoundSystemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
