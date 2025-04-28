@@ -7,9 +7,10 @@ import me.xoq.flux.utils.input.Keybind;
 import me.xoq.flux.utils.misc.ChatUtils;
 import me.xoq.flux.utils.misc.Utils;
 
-@SuppressWarnings("unused")
 public class Module {
-    private final String name, title, description;
+    private final String name;
+    private final String title;
+    private final String description;
     private final boolean subscribeOnToggle;
     private boolean enabled;
 
@@ -23,9 +24,13 @@ public class Module {
         this.subscribeOnToggle = subscribeOnToggle;
         this.settings = new SettingHelper(SettingsManager.getInstance(), name);
 
-        if (!subscribeOnToggle) FluxClient.EVENT_BUS.register(this);
+        if (!subscribeOnToggle) {
+            // always listening
+            FluxClient.EVENT_BUS.register(this);
+        }
     }
 
+    // default constructor, listens only when enabled
     protected Module(String name, String description) {
         this(name, description, true);
     }
@@ -40,10 +45,10 @@ public class Module {
         this.enabled = on;
 
         if (on) onEnabled();
-        else onDisabled();
+        else    onDisabled();
 
         if (subscribeOnToggle) {
-            if (on)  FluxClient.EVENT_BUS.register(this);
+            if (on) FluxClient.EVENT_BUS.register(this);
             else    FluxClient.EVENT_BUS.unregister(this);
         }
     }

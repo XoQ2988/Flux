@@ -1,6 +1,7 @@
 package me.xoq.flux.commands.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import me.xoq.flux.commands.Command;
 import me.xoq.flux.commands.Commands;
 import me.xoq.flux.modules.Module;
@@ -14,18 +15,18 @@ public class HelpCommand extends Command {
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
-        builder.executes(context -> {
-            info("Available commands:");
-            for (Command command : Commands.COMMANDS) {
-                String line = "." + command.getName() + " – " + command.getDescription();
-                info(line);
-            }
-            info("Available modules:");
-            for (Module module : Modules.getAll()) {
-                String line = "." + module.getName() + " – " + module.getDescription();
-                info(line);
-            }
-            return SINGLE_SUCCESS;
-        });
+        builder.executes(this::execute);
+    }
+
+    private int execute(CommandContext<CommandSource> context) {
+        info("§eAvailable commands:");
+        for (Command cmd : Commands.getAll()) {
+            info("§7. §6" + cmd.getTitle() + " §7– §f" + cmd.getDescription());
+        }
+        info("§eAvailable modules:");
+        for (Module mod : Modules.getAll()) {
+            info("§7. §6" + mod.getTitle() + " §7– §f" + mod.getDescription());
+        }
+        return SINGLE_SUCCESS;
     }
 }

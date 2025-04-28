@@ -52,7 +52,7 @@ public class AutoFish extends Module {
 
     private int ticksWaiting;
     private boolean cast, shouldReel;
-    private Random rand;
+    private final Random rand = new Random();
 
     @Override
     protected void onEnabled() {

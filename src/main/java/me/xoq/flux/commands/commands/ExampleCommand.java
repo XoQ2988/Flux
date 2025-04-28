@@ -4,8 +4,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import me.xoq.flux.commands.Command;
 import net.minecraft.command.CommandSource;
 
-public class TestCommand extends Command {
-    public TestCommand() {
+public class ExampleCommand extends Command {
+    public ExampleCommand() {
         super("test", "Command meant for testing.");
     }
 

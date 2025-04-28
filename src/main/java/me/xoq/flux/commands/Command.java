@@ -8,6 +8,7 @@ import me.xoq.flux.utils.misc.ChatUtils;
 import me.xoq.flux.utils.misc.Utils;
 import net.minecraft.command.CommandSource;
 
+@SuppressWarnings("unused")
 public abstract class Command {
     protected static final int SINGLE_SUCCESS = com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
@@ -21,22 +22,22 @@ public abstract class Command {
         this.description = description;
     }
 
-    protected static <T> RequiredArgumentBuilder<CommandSource, T> argument(final String name, final ArgumentType<T> type) {
-        return RequiredArgumentBuilder.argument(name, type);
+    protected static <T> RequiredArgumentBuilder<CommandSource, T> argument(String name, ArgumentType<T> argumentType) {
+        return RequiredArgumentBuilder.argument(name, argumentType);
     }
 
-    protected static LiteralArgumentBuilder<CommandSource> literal(final String name) {
+    protected static LiteralArgumentBuilder<CommandSource> literal( String name) {
         return LiteralArgumentBuilder.literal(name);
     }
 
-    public final void registerTo(CommandDispatcher<CommandSource> dispatcher) {
-        register(dispatcher, name);
+    public final void registerTo(CommandDispatcher<CommandSource> commandDispatcher) {
+        register(commandDispatcher, name);
     }
 
-    public void register(CommandDispatcher<CommandSource> dispatcher, String name) {
-        LiteralArgumentBuilder<CommandSource> builder = LiteralArgumentBuilder.literal(name);
+    public void register(CommandDispatcher<CommandSource> commandDispatcher, String alias) {
+        LiteralArgumentBuilder<CommandSource> builder = LiteralArgumentBuilder.literal(alias);
         build(builder);
-        dispatcher.register(builder);
+        commandDispatcher.register(builder);
     }
 
     public abstract void build(LiteralArgumentBuilder<CommandSource> builder);

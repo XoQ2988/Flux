@@ -11,43 +11,55 @@ import net.minecraft.command.CommandSource;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static me.xoq.flux.FluxClient.mc;
 
 @Mixin(ChatInputSuggestor.class)
 public abstract class ChatInputSuggesterMixin {
+    @Unique private static final String COMMAND_PREFIX = ".";
+
     @Shadow private ParseResults<CommandSource> parse;
     @Shadow @Final TextFieldWidget textField;
     @Shadow boolean completingSuggestions;
     @Shadow private CompletableFuture<Suggestions> pendingSuggestions;
     @Shadow private ChatInputSuggestor.SuggestionWindow window;
 
-
     @Shadow protected abstract void showCommandSuggestions();
 
-    @Inject(method = "refresh",
-            at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/StringReader;canRead()Z", remap = false),
+    @Inject(
+            method = "refresh",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/mojang/brigadier/StringReader;canRead()Z",
+                    remap = false
+            ),
             cancellable = true
     )
     public void onRefresh(CallbackInfo ci, @Local StringReader reader) {
-        String prefix = ".";
-        int length = prefix.length();
+        int prefixLen = COMMAND_PREFIX.length();
 
-        if (reader.canRead(length) && reader.getString().startsWith(prefix, reader.getCursor())) {
-            reader.setCursor(reader.getCursor() + length);
+        // Only activate when input starts with command prefix
+        if (reader.canRead(prefixLen) && reader.getString().startsWith(COMMAND_PREFIX, reader.getCursor())) {
+            // Skip prefix
+            reader.setCursor(reader.getCursor() + prefixLen);
 
-            if (this.parse == null) {
-                this.parse = Commands.DISPATCHER.parse(reader, mc.getNetworkHandler().getCommandSource());
+            // Parse once if needed
+            if (parse == null) {
+                parse = Commands.getDispatcher().parse(reader,
+                        Objects.requireNonNull(mc.getNetworkHandler()).getCommandSource());
             }
 
             int cursor = textField.getCursor();
-            if (cursor >= length && (this.window == null || !this.completingSuggestions)) {
-                this.pendingSuggestions = Commands.DISPATCHER.getCompletionSuggestions(this.parse, cursor);
+            // If suggestions are not in progress already, request them
+            if (cursor >= prefixLen && (this.window == null || !this.completingSuggestions)) {
+                this.pendingSuggestions = Commands.getDispatcher().getCompletionSuggestions(this.parse, cursor);
                 this.pendingSuggestions.thenRun(() -> {
                     if (this.pendingSuggestions.isDone()) {
                         this.showCommandSuggestions();
@@ -55,6 +67,7 @@ public abstract class ChatInputSuggesterMixin {
                 });
             }
 
+            // Prevent vanilla suggestion logic
             ci.cancel();
         }
     }
