@@ -15,6 +15,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.Random;
+
 import static me.xoq.flux.FluxClient.mc;
 
 public class AutoFish extends Module {
@@ -50,6 +52,7 @@ public class AutoFish extends Module {
 
     private int ticksWaiting;
     private boolean cast, shouldReel;
+    private Random rand;
 
     @Override
     protected void onEnabled() {
@@ -119,6 +122,6 @@ public class AutoFish extends Module {
         int min = minDelay.getValue();
         int max = maxDelay.getValue();
         if (max < min) max = min;
-        ticksWaiting = min + mc.world.random.nextInt(max - min + 1);
+        ticksWaiting = min + rand.nextInt(max - min + 1);
     }
 }
