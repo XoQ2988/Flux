@@ -8,7 +8,8 @@
     "ClientPlayNetworkHandlerMixin",
     "InGameHudMixin",
     "KeyboardMixin",
-    "MinecraftClientMixin"
+    "MinecraftClientMixin",
+    "BlockItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

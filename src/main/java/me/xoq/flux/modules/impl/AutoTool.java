@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import me.xoq.flux.events.EventHandler;
-import me.xoq.flux.events.StartBreakingBlockEvent;
+import me.xoq.flux.events.BlockAttackEvent;
 import me.xoq.flux.events.TickEvent;
 import me.xoq.flux.modules.Module;
 import me.xoq.flux.settings.BoolSetting;
@@ -70,7 +70,7 @@ public class AutoTool extends Module {
     }
 
     @EventHandler
-    private void onStartBreakingBlock(StartBreakingBlockEvent event) {
+    private void onStartBreakingBlock(BlockAttackEvent event) {
         if (!isEnabled()) return;
 
         BlockState blockState = mc.world.getBlockState(event.getBlockPos());

@@ -7,21 +7,27 @@ import me.xoq.flux.utils.input.Keybind;
 import me.xoq.flux.utils.misc.ChatUtils;
 import me.xoq.flux.utils.misc.Utils;
 
+@SuppressWarnings("unused")
 public abstract class Module {
-    private final String name;
-    private final String title;
-    private final String description;
-    protected final SettingHelper settings;
-
+    private final String name, title, description;
+    private final boolean subscribeOnToggle;
     private boolean enabled;
 
+    public final SettingHelper settings;
     public Keybind keybind = Keybind.none();
 
-    protected Module(String name, String description) {
+    protected Module(String name, String description, Boolean subscribeOnToggle) {
         this.name = name;
         this.title = Utils.nameToTitle(name);
         this.description = description;
+        this.subscribeOnToggle = subscribeOnToggle;
         this.settings = new SettingHelper(SettingsManager.getInstance(), name);
+
+        if (!subscribeOnToggle) FluxClient.EVENT_BUS.register(this);
+    }
+
+    protected Module(String name, String description) {
+        this(name, description, true);
     }
 
     public void toggle() {
@@ -29,15 +35,16 @@ public abstract class Module {
         setEnabled(!enabled);
     }
 
-    public void setEnabled(boolean value){
-        if (enabled == value) return;
-        enabled = value;
-        if (value) {
-            FluxClient.EVENT_BUS.register(this);
-            onEnabled();
-        } else {
-            FluxClient.EVENT_BUS.unregister(this);
-            onDisabled();
+    public void setEnabled(boolean on) {
+        if (this.enabled == on) return;
+        this.enabled = on;
+
+        if (on) onEnabled();
+        else onDisabled();
+
+        if (subscribeOnToggle) {
+            if (on)  FluxClient.EVENT_BUS.register(this);
+            else    FluxClient.EVENT_BUS.unregister(this);
         }
     }
 

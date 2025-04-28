@@ -3,12 +3,12 @@ package me.xoq.flux.events;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-public class StartBreakingBlockEvent {
+public class BlockAttackEvent {
     private final BlockPos blockPos;
     private final Direction direction;
     private boolean cancelled = false;
 
-    public StartBreakingBlockEvent(BlockPos blockPos, Direction direction) {
+    public BlockAttackEvent(BlockPos blockPos, Direction direction) {
         this.blockPos  = blockPos;
         this.direction = direction;
     }
