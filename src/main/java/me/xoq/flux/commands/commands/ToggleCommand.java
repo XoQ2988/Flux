@@ -25,31 +25,38 @@ public class ToggleCommand extends Command {
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
-        builder.then(
-            argument("module", StringArgumentType.word()).suggests(MODULE_SUGGESTIONS)
-                .then(literal("on")
-                    .executes(context -> {
-                        String name  = StringArgumentType.getString(context, "module");
-                        Module module = Modules.getByName(name);
-                        if (module == null) {
-                            info("Module not found: " + name);
-                            return 0;
-                        }
-                        if (!module.isEnabled()) module.toggle();
-                        return SINGLE_SUCCESS;
-                    }))
-                .then(literal("off")
-                    .executes(context -> {
-                        String name  = StringArgumentType.getString(context, "module");
-                        Module module = Modules.getByName(name);
-                        if (module == null) {
-                            info("Module not found: " + name);
-                            return 0;
-                        }
-                        if (module.isEnabled()) module.toggle();
-                        return SINGLE_SUCCESS;
-                    })
-                )
+        builder
+                .then(argument("module", StringArgumentType.word())
+                        .suggests(MODULE_SUGGESTIONS)
+                        .executes(this::toggleModule)
+                        .then(literal("on") .executes(context -> setModuleState(context, true)))
+                        .then(literal("off").executes(context -> setModuleState(context, false)))
         );
+    }
+
+    private int toggleModule(CommandContext<CommandSource> context) {
+        String moduleName = StringArgumentType.getString(context, "module");
+        Module module = Modules.getByName(moduleName);
+        if (module == null) {
+            info("§cModule not found: §6" + moduleName + "§r");
+        } else {
+            module.toggle();
+        }
+        return SINGLE_SUCCESS;
+    }
+
+    private int setModuleState(CommandContext<CommandSource> context, boolean enable) {
+        String moduleName = StringArgumentType.getString(context, "module");
+        Module module = Modules.getByName(moduleName);
+
+        if (module == null) {
+            info("§cModule not found: §6" + moduleName + "§r");
+        } else if (module.isEnabled() == enable) {
+            info("§e" + module.getTitle() +
+                    " is already " + (enable ? "§2ON§e" : "§4OFF") + "§r");
+        } else {
+            module.toggle();
+        }
+        return SINGLE_SUCCESS;
     }
 }
