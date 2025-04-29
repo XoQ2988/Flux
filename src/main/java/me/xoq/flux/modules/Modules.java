@@ -10,6 +10,7 @@ import me.xoq.flux.modules.impl.FpsDisplay;
 import me.xoq.flux.utils.input.Input;
 import me.xoq.flux.utils.input.KeyAction;
 import me.xoq.flux.utils.input.Keybind;
+import me.xoq.flux.utils.misc.ChatUtils;
 import me.xoq.flux.utils.misc.Utils;
 import org.lwjgl.glfw.GLFW;
 
@@ -69,6 +70,9 @@ public class Modules {
 
         // “capture next key” mode logic
         if (moduleToBind != null) {
+            ChatUtils.info(event.key + " pressed with action " + event.action);
+            if (event.action == KeyAction.Release) return;
+
             if (event.action == KeyAction.Press) {
                 if (event.key == GLFW.GLFW_KEY_ESCAPE) {
                     moduleToBind.keybind.set(Keybind.none());
