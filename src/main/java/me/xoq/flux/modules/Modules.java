@@ -10,15 +10,15 @@ import me.xoq.flux.modules.impl.FpsDisplay;
 import me.xoq.flux.utils.input.Input;
 import me.xoq.flux.utils.input.KeyAction;
 import me.xoq.flux.utils.input.Keybind;
-import me.xoq.flux.utils.misc.ChatUtils;
 import me.xoq.flux.utils.misc.Utils;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static me.xoq.flux.FluxClient.mc;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F3;
 
 public class Modules {
     private static final Modules INSTANCE = new Modules();
@@ -64,7 +64,7 @@ public class Modules {
     @EventHandler
     private void onKeyEvent(KeyEvent event) {
         // ignore when in any GUI or F3 is held
-        if (mc.currentScreen != null || Input.isKeyPressed(GLFW.GLFW_KEY_F3)) {
+        if (mc.currentScreen != null || Input.isKeyPressed(GLFW_KEY_F3)) {
             return;
         }
 
@@ -73,7 +73,7 @@ public class Modules {
             if (event.getAction() == KeyAction.Release) return;
 
             if (event.getAction() == KeyAction.Press) {
-                if (event.getKey() == GLFW.GLFW_KEY_ESCAPE) {
+                if (event.getKey() == GLFW_KEY_ESCAPE) {
                     moduleToBind.keybind.set(Keybind.none());
                     moduleToBind.info("Bind cleared.");
                 } else {

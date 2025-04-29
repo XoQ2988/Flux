@@ -4,17 +4,17 @@ import me.xoq.flux.settings.BaseSetting;
 import me.xoq.flux.settings.SettingsManager;
 
 public class SettingHelper {
-    private final SettingsManager mgr;
-    private final String namespace;
+    private final SettingsManager settingsManager;
+    private final String namespacePrefix;
 
-    public SettingHelper(SettingsManager mgr, String namespace) {
-        this.mgr = mgr;
-        this.namespace = namespace;
+    public SettingHelper(SettingsManager settingsManager, String namespace) {
+        this.settingsManager = settingsManager;
+        this.namespacePrefix = namespace + ".";
     }
 
     public <T> BaseSetting<T> add(BaseSetting<T> setting) {
-        setting.setKey(namespace + "." + setting.getKey());
-        mgr.register(setting);
+        setting.setKey(namespacePrefix + setting.getKey());
+        settingsManager.register(setting);
         return setting;
     }
 }

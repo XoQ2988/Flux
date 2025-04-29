@@ -1,6 +1,7 @@
 package me.xoq.flux.utils.input;
 
-import org.lwjgl.glfw.GLFW;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public enum KeyAction {
     Press,
@@ -9,8 +10,8 @@ public enum KeyAction {
 
     public static KeyAction get(int action) {
         return switch (action) {
-            case GLFW.GLFW_PRESS -> Press;
-            case GLFW.GLFW_RELEASE -> Release;
+            case GLFW_PRESS -> Press;
+            case GLFW_RELEASE -> Release;
             default -> Repeat;
         };
     }

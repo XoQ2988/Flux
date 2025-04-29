@@ -27,7 +27,7 @@ public class BindsCommand extends Command {
 
         info("§eModule keybinds (" + bound.size() + "):");
         for (Module module : bound) {
-            String keyName = Utils.getKeyName(module.keybind.getValue());
+            String keyName = Utils.getKeyName(module.keybind.getCode());
             info("§7[ §6" + module.getTitle() + " §7] §e" + keyName + "§7");
         }
         return SINGLE_SUCCESS;

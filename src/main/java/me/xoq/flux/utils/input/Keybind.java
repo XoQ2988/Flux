@@ -1,64 +1,68 @@
 package me.xoq.flux.utils.input;
 
+import me.xoq.flux.utils.misc.Utils;
+
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Keybind {
+@SuppressWarnings("unused")
+public final class Keybind {
     private boolean isKey;
-    private int value;
+    private int code;
     private int modifiers;
 
-    private Keybind(boolean isKey, int value, int modifiers) {
-        set(isKey, value, modifiers);
+    private Keybind(boolean isKey, int code, int modifiers) {
+        set(isKey, code, modifiers);
     }
 
     public static Keybind none() {
         return new Keybind(true, GLFW_KEY_UNKNOWN, 0);
     }
 
-    public static Keybind fromKey(int key) {
-        return new Keybind(true, key, 0);
-    }
-
-    public static Keybind fromKeys(int key, int modifiers) {
-        return new Keybind(true, key, modifiers);
-    }
-
-    public static Keybind fromButton(int button) {
-        return new Keybind(false, button, 0);
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public boolean isSet() {
-        return value != GLFW_KEY_UNKNOWN;
-    }
 
     public boolean isKey() {
         return isKey;
     }
 
-    public boolean hasMods() {
+    public int getCode() {
+        return code;
+    }
+
+    public int getModifiers() {
+        return modifiers;
+    }
+
+    public boolean isSet() {
+        return code != GLFW_KEY_UNKNOWN;
+    }
+
+    public boolean hasModifiers() {
         return isKey && modifiers != 0;
     }
 
-    public void set(boolean isKey, int value, int modifiers) {
+    public void set(boolean isKey, int code, int modifiers) {
         this.isKey = isKey;
-        this.value = value;
+        this.code = code;
         this.modifiers = modifiers;
     }
 
-    public Keybind set(Keybind value) {
+    public void set(Keybind value) {
         this.isKey = value.isKey;
-        this.value = value.value;
+        this.code = value.code;
         this.modifiers = value.modifiers;
-
-        return this;
     }
 
     public void reset() {
         set(true, GLFW_KEY_UNKNOWN, 0);
+    }
+
+    public boolean matches(boolean isKey, int value, int modifiers) {
+        if (!this.isSet() || this.isKey != isKey) return false;
+        if (!hasModifiers()) return this.code == value;
+        return this.code == value && this.modifiers == modifiers;
+    }
+
+    public boolean isPressed() {
+        return isKey ? modifiersPressed() && Input.isKeyPressed(code) : Input.isButtonPressed(code);
     }
 
     public boolean canBindTo(boolean isKey, int value, int modifiers) {
@@ -67,27 +71,6 @@ public class Keybind {
             return value != GLFW_KEY_UNKNOWN && value != GLFW_KEY_ESCAPE;
         }
         return value != GLFW_MOUSE_BUTTON_LEFT && value != GLFW_MOUSE_BUTTON_RIGHT;
-    }
-
-    public boolean matches(boolean isKey, int value, int modifiers) {
-        if (!this.isSet() || this.isKey != isKey) return false;
-        if (!hasMods()) return this.value == value;
-        return this.value == value && this.modifiers == modifiers;
-    }
-
-    public boolean isPressed() {
-        return isKey ? modifiersPressed() && Input.isKeyPressed(value) : Input.isButtonPressed(value);
-    }
-
-    private boolean modifiersPressed() {
-        if (!hasMods()) return true;
-
-        if (!isModPressed(GLFW_MOD_CONTROL, GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL)) return false;
-        if (!isModPressed(GLFW_MOD_SUPER, GLFW_KEY_LEFT_SUPER, GLFW_KEY_RIGHT_SUPER)) return false;
-        if (!isModPressed(GLFW_MOD_ALT, GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT)) return false;
-        if (!isModPressed(GLFW_MOD_SHIFT, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT)) return false;
-
-        return true;
     }
 
     private boolean isModPressed(int value, int... keys) {
@@ -105,30 +88,61 @@ public class Keybind {
     }
 
     public Keybind copy() {
-        return new Keybind(isKey, value, modifiers);
+        return new Keybind(isKey, code, modifiers);
+    }
+
+    private boolean modifiersPressed() {
+        if (!hasModifiers()) return true;
+
+        if ((modifiers & GLFW_MOD_CONTROL) != 0
+                && !Input.isKeyPressed(GLFW_KEY_LEFT_CONTROL)
+                && !Input.isKeyPressed(GLFW_KEY_RIGHT_CONTROL)) {
+            return false;
+        }
+        if ((modifiers & GLFW_MOD_SHIFT) != 0
+                && !Input.isKeyPressed(GLFW_KEY_LEFT_SHIFT)
+                && !Input.isKeyPressed(GLFW_KEY_RIGHT_SHIFT)) {
+            return false;
+        }
+        if ((modifiers & GLFW_MOD_ALT) != 0
+                && !Input.isKeyPressed(GLFW_KEY_LEFT_ALT)
+                && !Input.isKeyPressed(GLFW_KEY_RIGHT_ALT)) {
+            return false;
+        }
+        return (modifiers & GLFW_MOD_SUPER) == 0
+                || Input.isKeyPressed(GLFW_KEY_LEFT_SUPER)
+                || Input.isKeyPressed(GLFW_KEY_RIGHT_SUPER);
     }
 
     @Override
     public String toString() {
-        if (!isSet()) return "None";
+        if (!isSet()) {
+            return "None";
+        }
 
-        StringBuilder label = new StringBuilder();
-        if ((modifiers & GLFW_MOD_CONTROL) != 0) label.append("Ctrl + ");
-        if ((modifiers & GLFW_MOD_SUPER) != 0) label.append("Cmd + ");
-        if ((modifiers & GLFW_MOD_ALT) != 0) label.append("Alt + ");
-        if ((modifiers & GLFW_MOD_SHIFT) != 0) label.append("Shift + ");
-        if ((modifiers & GLFW_MOD_CAPS_LOCK) != 0) label.append("Caps Lock + ");
-        if ((modifiers & GLFW_MOD_NUM_LOCK) != 0) label.append("Num Lock + ");
-        label.append(value);
+        StringBuilder sb = new StringBuilder();
+        if ((modifiers & GLFW_MOD_CONTROL) != 0) sb.append("Ctrl+");
+        if ((modifiers & GLFW_MOD_SHIFT)   != 0) sb.append("Shift+");
+        if ((modifiers & GLFW_MOD_ALT)     != 0) sb.append("Alt+");
+        if ((modifiers & GLFW_MOD_SUPER)   != 0) sb.append("Cmd+");
 
-        return label.toString();
+        // use Utils to get human-friendly name
+        sb.append(Utils.getKeyName(code));
+        return sb.toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Keybind keybind = (Keybind) o;
-        return isKey == keybind.isKey && value == keybind.value && modifiers == keybind.modifiers;
+        if (!(o instanceof Keybind keybind)) return false;
+        return isKey == keybind.isKey && code == keybind.code && modifiers == keybind.modifiers;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Boolean.hashCode(isKey);
+        result = 31 * result + code;
+        result = 31 * result + modifiers;
+        return result;
     }
 }

@@ -4,7 +4,6 @@ import me.xoq.flux.commands.Commands;
 import me.xoq.flux.events.EventBus;
 import me.xoq.flux.modules.Modules;
 import me.xoq.flux.utils.config.ConfigManager;
-import me.xoq.flux.utils.misc.ChatUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
@@ -18,32 +17,33 @@ public class FluxClient implements ClientModInitializer {
 	public static final String MOD_ID = "flux";
 	public static final ModMetadata MOD_META;
 	public static final String NAME;
-
 	public static MinecraftClient mc;
 	public static final EventBus EVENT_BUS = new EventBus();
-	public static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".json");
+	public static final Path CONFIG_FILE;
+
 	public static final Logger LOG;
 
 	static {
-		MOD_META = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().getMetadata();
-
+		var container = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow();
+		MOD_META = container.getMetadata();
 		NAME = MOD_META.getName();
+		CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".json");
+
 		LOG = LoggerFactory.getLogger(NAME);
 	}
 
 	@Override
 	public void onInitializeClient() {
+		// cache client instance
 		mc = MinecraftClient.getInstance();
 
+		// init core systems
 		Modules.init();
 		Commands.init();
 		ConfigManager.load();
-		ChatUtils.init();
 
-		// Shutdown hook to save
-		Runtime.getRuntime().addShutdownHook(new Thread(
-				ConfigManager::save
-		));
+		// ensure config is saved on shutdown
+		Runtime.getRuntime().addShutdownHook(new Thread(ConfigManager::save));
 
 		LOG.info("{} initialized", NAME);
 	}

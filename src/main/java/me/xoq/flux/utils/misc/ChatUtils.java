@@ -10,85 +10,72 @@ import org.jetbrains.annotations.Nullable;
 import static me.xoq.flux.FluxClient.mc;
 
 public class ChatUtils {
-    private static Text PREFIX;
+    private static final MutableText PREFIX = Text.literal("[")
+            .setStyle(Style.EMPTY.withFormatting(Formatting.GRAY))
+            .append(Text.literal("Flux")
+                    .setStyle(Style.EMPTY.withFormatting(Formatting.AQUA)))
+            .append(Text.literal("] ")
+                    .setStyle(Style.EMPTY.withFormatting(Formatting.GRAY)));
 
-    private ChatUtils() {}
-
-    public static void init() {
-        PREFIX = Text.empty()
-                .setStyle(Style.EMPTY.withFormatting(Formatting.GRAY))
-                .append("[")
-                .append(Text.literal("Flux").setStyle(Style.EMPTY.withFormatting(Formatting.AQUA)))
-                .append("] ");
-    }
+    private ChatUtils() { }
 
     public static void info(String message) {
-        sendMsg(null, Formatting.GRAY, message);
+        send(null, Formatting.GRAY, message);
     }
 
     public static void info(String prefix, String message) {
-        sendMsg(prefix, Formatting.GRAY, message);
+        send(prefix, Formatting.GRAY, message);
     }
 
-    public static void sendMsg(@Nullable String prefixTitle, @Nullable Formatting color, String messageContent) {
+    public static void send(@Nullable String moduleTitle, Formatting color, String content) {
         if (mc.world == null) return;
-        MutableText message = Text.empty();
-        message.append(PREFIX);
-        if (prefixTitle != null) message.append(getCustomPrefix(prefixTitle));
-        message.append(formatMsg(messageContent, color));
 
-        mc.inGameHud.getChatHud().addMessage(message);
+        MutableText msg = PREFIX.copy();
+
+        if (moduleTitle != null) {
+            msg.append(Text.literal("[")
+                            .setStyle(Style.EMPTY.withFormatting(Formatting.GRAY)))
+                    .append(Text.literal(moduleTitle)
+                            .setStyle(Style.EMPTY.withFormatting(Formatting.DARK_AQUA)))
+                    .append(Text.literal("] ")
+                            .setStyle(Style.EMPTY.withFormatting(Formatting.GRAY)));
+        }
+
+        msg.append(parseFormatting(content, color));
+        mc.inGameHud.getChatHud().addMessage(msg);
     }
 
-    private static MutableText getCustomPrefix(String prefixTitle) {
-        MutableText prefix = Text.empty();
-        prefix.setStyle(prefix.getStyle().withFormatting(Formatting.GRAY));
-
-        prefix.append("[");
-
-        MutableText moduleTitle = Text.literal(prefixTitle);
-        moduleTitle.setStyle(moduleTitle.getStyle().withFormatting(Formatting.DARK_AQUA));
-        prefix.append(moduleTitle);
-
-        prefix.append("] ");
-
-        return prefix;
-    }
-
-    private static MutableText formatMsg(String message, Formatting defaultColor) {
-        StringReader reader = new StringReader(message);
-        MutableText resultText = Text.empty();
-        Style currentStyle = Style.EMPTY.withFormatting(defaultColor);
-        StringBuilder segment = new StringBuilder();
+    private static MutableText parseFormatting(String content, Formatting defaultColor) {
+        StringReader reader = new StringReader(content);
+        MutableText result = Text.empty();
+        Style style = Style.EMPTY.withFormatting(defaultColor);
+        StringBuilder buf = new StringBuilder();
 
         while (reader.canRead()) {
             char c = reader.read();
             if (c == '§' && reader.canRead()) {
-                // flush accumulated segment
-                if (!segment.isEmpty()) {
-                    resultText.append(Text.literal(segment.toString()).setStyle(currentStyle));
-                    segment.setLength(0);
+                // flush buffered text
+                if (!buf.isEmpty()) {
+                    result.append(Text.literal(buf.toString()).setStyle(style));
+                    buf.setLength(0);
                 }
-                // parse formatting code
+                // apply new code
                 char code = reader.read();
                 Formatting fmt = Formatting.byCode(code);
                 if (fmt != null) {
-                    // update style: color resets previous formatting except bold/italic/etc.
-                    currentStyle = Style.EMPTY.withFormatting(fmt);
+                    style = Style.EMPTY.withFormatting(fmt);
                 } else {
-                    // unknown code: treat literally
-                    segment.append('§').append(code);
+                    // unknown code, treat literally
+                    buf.append('§').append(code);
                 }
             } else {
-                segment.append(c);
+                buf.append(c);
             }
         }
-
         // flush remainder
-        if (!segment.isEmpty()) {
-            resultText.append(Text.literal(segment.toString()).setStyle(currentStyle));
+        if (!buf.isEmpty()) {
+            result.append(Text.literal(buf.toString()).setStyle(style));
         }
-
-        return resultText;
+        return result;
     }
 }

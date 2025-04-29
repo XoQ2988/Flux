@@ -10,24 +10,36 @@ import me.xoq.flux.utils.input.Keybind;
 
 import java.io.*;
 
-public class ConfigManager {
+public final class ConfigManager {
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .create();
 
     public static FluxConfig config;
 
+    private ConfigManager() { }
+
     public static void load() {
-        try (Reader reader = new FileReader(FluxClient.FILE.toFile())) {
-            config = GSON.fromJson(reader, FluxConfig.class);
-        } catch (IOException e) {
+        File configFile = FluxClient.CONFIG_FILE.toFile();
+
+        if (configFile.exists()) {
+            try (Reader fileReader = new FileReader(configFile)) {
+                config = GSON.fromJson(fileReader, FluxConfig.class);
+            } catch (IOException ioException) {
+                FluxClient.LOG.error("Failed to read config, using defaults", ioException);
+                config = new FluxConfig();
+            }
+        } else {
+            // first run or deleted file
             config = new FluxConfig();
         }
 
         // apply module entries…
         for (FluxConfig.ModuleEntry moduleEntry : config.modules) {
             Module module = Modules.getByName(moduleEntry.name);
+
             if (module == null) continue;
+
             module.setEnabled(moduleEntry.enabled);
             module.keybind = moduleEntry.keybind != null
                     ? moduleEntry.keybind
@@ -39,23 +51,31 @@ public class ConfigManager {
     }
 
     public static void save() {
-        // rebuild module list
         FluxConfig newCfg = new FluxConfig();
-        for (Module m : Modules.getAll()) {
-            FluxConfig.ModuleEntry e = new FluxConfig.ModuleEntry();
-            e.name    = m.getName();
-            e.enabled = m.isEnabled();
-            e.keybind = m.keybind;
-            newCfg.modules.add(e);
+
+        for (Module module : Modules.getAll()) {
+            FluxConfig.ModuleEntry moduleEntry = new FluxConfig.ModuleEntry();
+            moduleEntry.name    = module.getName();
+            moduleEntry.enabled = module.isEnabled();
+            moduleEntry.keybind = module.keybind;
+            newCfg.modules.add(moduleEntry);
         }
 
         // snapshot settings into config
         SettingsManager.getInstance().save(newCfg);
 
-        try (Writer writer = new FileWriter(FluxClient.FILE.toFile())) {
+        // ensure parent directory exists
+        File configFile = FluxClient.CONFIG_FILE.toFile();
+        File configDirectory = configFile.getParentFile();
+        if (configDirectory != null && !configDirectory.exists()) {
+            configDirectory.mkdirs();
+        }
+
+        // write JSON out
+        try (Writer writer = new FileWriter(configFile)) {
             GSON.toJson(newCfg, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            FluxClient.LOG.error("Failed to save config", ioException);
         }
     }
 }
