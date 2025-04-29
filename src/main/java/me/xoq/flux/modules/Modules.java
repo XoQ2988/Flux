@@ -70,7 +70,6 @@ public class Modules {
 
         // “capture next key” mode logic
         if (moduleToBind != null) {
-            ChatUtils.info(event.getKey() + " pressed with action " + event.getAction());
             if (event.getAction() == KeyAction.Release) return;
 
             if (event.getAction() == KeyAction.Press) {
@@ -80,7 +79,7 @@ public class Modules {
                 } else {
                     moduleToBind.keybind.set(true, event.getKey(), event.getModifiers());
                     moduleToBind.info("Bound to " +
-                            Utils.getKeyName(moduleToBind.keybind.getValue()) + ".");
+                            Utils.getKeyName(moduleToBind.keybind.getCode()) + ".");
                 }
             }
             event.cancel();
