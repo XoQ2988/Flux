@@ -34,6 +34,7 @@ public class Modules {
         register(new AntiBreak());
         register(new AutoFish());
         register(new AutoTool());
+        register(new AutoTotem());
         register(new HudDisplay());
         register(new RandomHotbar());
 
