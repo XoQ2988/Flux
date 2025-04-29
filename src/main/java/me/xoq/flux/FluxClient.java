@@ -2,6 +2,7 @@ package me.xoq.flux;
 
 import me.xoq.flux.commands.Commands;
 import me.xoq.flux.events.EventBus;
+import me.xoq.flux.hud.HudEntries;
 import me.xoq.flux.modules.Modules;
 import me.xoq.flux.utils.config.ConfigManager;
 import net.fabricmc.api.ClientModInitializer;
@@ -38,6 +39,7 @@ public class FluxClient implements ClientModInitializer {
 		mc = MinecraftClient.getInstance();
 
 		// init core systems
+		HudEntries.init();
 		Modules.init();
 		Commands.init();
 		ConfigManager.load();
