@@ -2,7 +2,7 @@ package me.xoq.flux.modules;
 
 import me.xoq.flux.FluxClient;
 import me.xoq.flux.events.EventHandler;
-import me.xoq.flux.events.KeyEvent;
+import me.xoq.flux.events.misc.KeyEvent;
 import me.xoq.flux.modules.impl.AntiBreak;
 import me.xoq.flux.modules.impl.AutoFish;
 import me.xoq.flux.modules.impl.AutoTool;
@@ -70,15 +70,15 @@ public class Modules {
 
         // “capture next key” mode logic
         if (moduleToBind != null) {
-            ChatUtils.info(event.key + " pressed with action " + event.action);
-            if (event.action == KeyAction.Release) return;
+            ChatUtils.info(event.getKey() + " pressed with action " + event.getAction());
+            if (event.getAction() == KeyAction.Release) return;
 
-            if (event.action == KeyAction.Press) {
-                if (event.key == GLFW.GLFW_KEY_ESCAPE) {
+            if (event.getAction() == KeyAction.Press) {
+                if (event.getKey() == GLFW.GLFW_KEY_ESCAPE) {
                     moduleToBind.keybind.set(Keybind.none());
                     moduleToBind.info("Bind cleared.");
                 } else {
-                    moduleToBind.keybind.set(true, event.key, event.modifiers);
+                    moduleToBind.keybind.set(true, event.getKey(), event.getModifiers());
                     moduleToBind.info("Bound to " +
                             Utils.getKeyName(moduleToBind.keybind.getValue()) + ".");
                 }
@@ -89,13 +89,13 @@ public class Modules {
         }
 
         // Normal module-toggle behavior
-        if (event.action != KeyAction.Press) {
+        if (event.getAction() != KeyAction.Press) {
             return;
         }
 
         for (Module module : modules.values()) {
             Keybind kb = module.keybind;
-            if (kb.matches(true, event.key, event.modifiers)) {
+            if (kb.matches(true, event.getKey(), event.getModifiers())) {
                 module.toggle();
                 event.cancel();
                 break;

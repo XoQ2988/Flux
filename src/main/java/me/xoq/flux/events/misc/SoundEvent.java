@@ -1,10 +1,10 @@
-package me.xoq.flux.events;
+package me.xoq.flux.events.misc;
 
+import me.xoq.flux.events.CancellableEvent;
 import net.minecraft.client.sound.SoundInstance;
 
-public class SoundEvent {
+public class SoundEvent extends CancellableEvent {
     private final SoundInstance soundInstance;
-    private boolean cancelled = false;
 
     public SoundEvent(SoundInstance soundInstance) {
         this.soundInstance = soundInstance;
@@ -13,7 +13,4 @@ public class SoundEvent {
     public SoundInstance getSoundInstance() {
         return soundInstance;
     }
-
-    public void cancel()              { this.cancelled = true; }
-    public boolean isCancelled()      { return this.cancelled; }
 }

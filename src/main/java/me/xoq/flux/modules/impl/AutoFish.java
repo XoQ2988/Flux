@@ -1,8 +1,8 @@
 package me.xoq.flux.modules.impl;
 
 import me.xoq.flux.events.EventHandler;
-import me.xoq.flux.events.SoundEvent;
-import me.xoq.flux.events.TickEvent;
+import me.xoq.flux.events.misc.SoundEvent;
+import me.xoq.flux.events.misc.TickEvent;
 import me.xoq.flux.modules.Module;
 import me.xoq.flux.settings.IntSetting;
 import me.xoq.flux.settings.Setting;

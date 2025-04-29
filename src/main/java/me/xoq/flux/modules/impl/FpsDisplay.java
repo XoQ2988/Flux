@@ -1,7 +1,7 @@
 package me.xoq.flux.modules.impl;
 
 import me.xoq.flux.events.EventHandler;
-import me.xoq.flux.events.Render2DEvent;
+import me.xoq.flux.events.render.Render2DEvent;
 import me.xoq.flux.modules.Module;
 import me.xoq.flux.settings.ColorSetting;
 import me.xoq.flux.settings.IntSetting;

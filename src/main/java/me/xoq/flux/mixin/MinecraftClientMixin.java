@@ -1,8 +1,8 @@
 package me.xoq.flux.mixin;
 
 import me.xoq.flux.FluxClient;
-import me.xoq.flux.events.OpenScreenEvent;
-import me.xoq.flux.events.TickEvent;
+import me.xoq.flux.events.render.OpenScreenEvent;
+import me.xoq.flux.events.misc.TickEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "tick")
     private void onTick(CallbackInfo info) {
-        FluxClient.EVENT_BUS.dispatch(TickEvent.get());
+        FluxClient.EVENT_BUS.dispatch(new TickEvent());
     }
 
     @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)

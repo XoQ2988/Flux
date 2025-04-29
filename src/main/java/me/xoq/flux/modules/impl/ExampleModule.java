@@ -1,6 +1,7 @@
 package me.xoq.flux.modules.impl;
 
 import me.xoq.flux.events.*;
+import me.xoq.flux.events.misc.TickEvent;
 import me.xoq.flux.modules.Module;
 import me.xoq.flux.settings.BoolSetting;
 import me.xoq.flux.settings.Setting;

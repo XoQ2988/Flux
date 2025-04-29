@@ -1,7 +1,7 @@
 package me.xoq.flux.mixin;
 
 import me.xoq.flux.FluxClient;
-import me.xoq.flux.events.SoundEvent;
+import me.xoq.flux.events.misc.SoundEvent;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundSystem;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,6 +1,6 @@
 package me.xoq.flux.modules.impl;
 
-import me.xoq.flux.events.BlockAttackEvent;
+import me.xoq.flux.events.world.BlockAttackEvent;
 import me.xoq.flux.events.EventHandler;
 import me.xoq.flux.modules.Module;
 import me.xoq.flux.settings.BoolSetting;

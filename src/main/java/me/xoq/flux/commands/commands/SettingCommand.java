@@ -141,7 +141,7 @@ public class SettingCommand extends Command {
         return SINGLE_SUCCESS;
     }
 
-    @SuppressWarnings("SameReturnValue")
+    @SuppressWarnings({"SameReturnValue", "unchecked"})
     private int setOne(CommandContext<CommandSource> context) {
         String moduleName = StringArgumentType.getString(context, "module");
         String settingName = StringArgumentType.getString(context, "setting");
@@ -175,29 +175,9 @@ public class SettingCommand extends Command {
             return SINGLE_SUCCESS;
         }
 
-        //noinspection unchecked
         ((Setting<Object>) rawSetting).setValue(parsedValue);
 
         info(String.format("Set §6%s§7 to §e%s§r", rawSetting.getTitle(), rawSetting.getValue()));
-
-        return SINGLE_SUCCESS;
-    }
-
-    private int resetOne(CommandContext<CommandSource> context) {
-        String moduleName = StringArgumentType.getString(context, "module");
-        String settingName = StringArgumentType.getString(context, "setting");
-        var optionalSetting = findSetting(moduleName, settingName);
-
-        if (optionalSetting.isEmpty()) {
-            warn("Unknown setting: " + settingName);
-
-        } else {
-            //noinspection unchecked
-            Setting<Object> setting = (Setting<Object>) optionalSetting.get();
-            setting.reset();
-            info(String.format("Reset §6%s§7 to default §e%s§r",
-                    setting.getTitle(), setting.getDefault()));
-        }
 
         return SINGLE_SUCCESS;
     }

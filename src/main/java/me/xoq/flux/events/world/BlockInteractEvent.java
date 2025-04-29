@@ -1,10 +1,10 @@
-package me.xoq.flux.events;
+package me.xoq.flux.events.world;
 
+import me.xoq.flux.events.CancellableEvent;
 import net.minecraft.block.BlockState;
 
-public class BlockInteractEvent {
+public class BlockInteractEvent extends CancellableEvent {
     private final BlockState blockState;
-    private boolean cancelled = false;
 
     public BlockInteractEvent(BlockState blockState) {
         this.blockState  = blockState;
@@ -13,7 +13,4 @@ public class BlockInteractEvent {
     public BlockState getBlockState() {
         return blockState;
     }
-
-    public void cancel()              { this.cancelled = true; }
-    public boolean isCancelled()      { return this.cancelled; }
 }

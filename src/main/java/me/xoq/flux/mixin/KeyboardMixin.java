@@ -1,7 +1,7 @@
 package me.xoq.flux.mixin;
 
 import me.xoq.flux.FluxClient;
-import me.xoq.flux.events.KeyEvent;
+import me.xoq.flux.events.misc.KeyEvent;
 import me.xoq.flux.utils.input.Input;
 import me.xoq.flux.utils.input.KeyAction;
 import net.minecraft.client.Keyboard;
@@ -24,8 +24,8 @@ public abstract class KeyboardMixin {
         Input.setKeyState(key, action != GLFW.GLFW_RELEASE);
 
         // dispatch and possibly cancel
-        KeyEvent evt = KeyEvent.get(key, modifiers, KeyAction.get(action));
-        if (FluxClient.EVENT_BUS.dispatch(evt).isCancelled()) {
+        KeyEvent keyEvent = new KeyEvent(key, modifiers, KeyAction.get(action));
+        if (FluxClient.EVENT_BUS.dispatch(keyEvent).isCancelled()) {
             info.cancel();
         }
     }

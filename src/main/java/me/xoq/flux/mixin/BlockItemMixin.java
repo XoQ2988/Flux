@@ -1,7 +1,7 @@
 package me.xoq.flux.mixin;
 
 import me.xoq.flux.FluxClient;
-import me.xoq.flux.events.BlockPlaceEvent;
+import me.xoq.flux.events.world.BlockPlaceEvent;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;

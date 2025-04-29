@@ -2,9 +2,9 @@ package me.xoq.flux.mixin;
 
 
 import me.xoq.flux.FluxClient;
-import me.xoq.flux.events.BlockBreakEvent;
-import me.xoq.flux.events.BlockInteractEvent;
-import me.xoq.flux.events.BlockAttackEvent;
+import me.xoq.flux.events.world.BlockBreakEvent;
+import me.xoq.flux.events.world.BlockInteractEvent;
+import me.xoq.flux.events.world.BlockAttackEvent;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.util.ActionResult;
