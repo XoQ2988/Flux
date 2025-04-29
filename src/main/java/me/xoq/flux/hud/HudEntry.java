@@ -32,8 +32,4 @@ public class HudEntry {
     public void setColor(int c) { color = c; }
     public int getPriority() { return priority; }
     public void setPriority(int p) { priority = p; }
-
-    public void render(DrawContext ctx, TextRenderer font, int x, int y) {
-        ctx.drawTextWithShadow(font, supplier.get(), x, y, color);
-    }
 }
