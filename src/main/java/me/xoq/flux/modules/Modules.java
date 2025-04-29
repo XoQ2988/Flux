@@ -3,10 +3,7 @@ package me.xoq.flux.modules;
 import me.xoq.flux.FluxClient;
 import me.xoq.flux.events.EventHandler;
 import me.xoq.flux.events.misc.KeyEvent;
-import me.xoq.flux.modules.impl.AntiBreak;
-import me.xoq.flux.modules.impl.AutoFish;
-import me.xoq.flux.modules.impl.AutoTool;
-import me.xoq.flux.modules.impl.HudDisplay;
+import me.xoq.flux.modules.impl.*;
 import me.xoq.flux.utils.input.Input;
 import me.xoq.flux.utils.input.KeyAction;
 import me.xoq.flux.utils.input.Keybind;
@@ -38,6 +35,7 @@ public class Modules {
         register(new AutoFish());
         register(new AutoTool());
         register(new HudDisplay());
+        register(new RandomHotbar());
 
         // listen for key events to handle toggles & rebinding
         FluxClient.EVENT_BUS.register(INSTANCE);

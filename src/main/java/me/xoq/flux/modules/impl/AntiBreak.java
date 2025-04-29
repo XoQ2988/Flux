@@ -6,7 +6,10 @@ import me.xoq.flux.modules.Module;
 import me.xoq.flux.settings.BoolSetting;
 import me.xoq.flux.settings.IntSetting;
 import me.xoq.flux.settings.Setting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShearsItem;
+import net.minecraft.registry.tag.ItemTags;
 
 import static me.xoq.flux.FluxClient.mc;
 
@@ -60,7 +63,7 @@ public class AntiBreak extends Module {
     @EventHandler
     private void onBlockAttack(BlockAttackEvent event) {
         ItemStack handStack = mc.player.getMainHandStack();
-        if (handStack.isEmpty()) return;
+        if (handStack.isEmpty() || !isTool(handStack)) return;
 
         int maxDamage = handStack.getMaxDamage();
         int damage = handStack.getDamage();
@@ -85,6 +88,13 @@ public class AntiBreak extends Module {
                 warned = true;
             }
         } else warned = false;
+    }
+
+    public static boolean isTool(Item item) {
+        return isTool(item.getDefaultStack());
+    }
+    public static boolean isTool(ItemStack itemStack) {
+        return itemStack.isIn(ItemTags.AXES) || itemStack.isIn(ItemTags.HOES) || itemStack.isIn(ItemTags.PICKAXES) || itemStack.isIn(ItemTags.SHOVELS) || itemStack.getItem() instanceof ShearsItem;
     }
 
     private String formatToolName(ItemStack stack) {
